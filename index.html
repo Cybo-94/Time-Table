@@ -3,677 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBO • Watched Shows • BETA </title>
-<style>
-  * {
-    box-sizing: border-box;
-  }
-   .footer {
-    background-color: #000; /* black background */
-    color: #fff; /* white text for contrast */
-    text-align: center; /* centers all text inside */
-    padding: 20px 0; /* spacing inside footer */
-  }
-
-  .footer a {
-    color: #00faff; /* link color */
-    text-decoration: none; /* remove underline */
-  }
-
-  .footer a:hover {
-    text-decoration: underline; /* optional hover effect */
-  }
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-  }
-  
-  /* Top bar */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 30px;
-    background: rgba(30, 30, 47, 0.95);
-    backdrop-filter: blur(10px);
-    color: white;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  
-  .logo-section {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  .logo {
-    font-weight: bold;
-    font-size: 1.8em;
-    background: linear-gradient(90deg, #f44369, #3e3b92);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  .title {
-    font-size: 1.2em;
-    opacity: 0.9;
-  }
-  
-  .controls {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  .search-container {
-    position: relative;
-  }
-  
-  #search {
-    padding: 10px 15px;
-    padding-left: 40px;
-    border-radius: 25px;
-    border: none;
-    background: rgba(255,255,255,0.1);
-    color: white;
-    width: 250px;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-  }
-  
-  #search::placeholder {
-    color: rgba(255,255,255,0.7);
-  }
-  
-  #search:focus {
-    outline: none;
-    background: rgba(255,255,255,0.2);
-    width: 300px;
-  }
-  
-  .search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255,255,255,0.7);
-  }
-  
-  select {
-    padding: 10px 15px;
-    border-radius: 20px;
-    border: none;
-    background: rgba(255,255,255,0.1);
-    color: white;
-    backdrop-filter: blur(10px);
-    cursor: pointer;
-  }
-  
-  select option {
-    background: #1E1E2F;
-    color: white;
-  }
-  
-  /* Stats Bar */
-  .stats-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    color: white;
-    gap: 30px;
-    flex-wrap: wrap;
-  }
-  
-  .stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-  }
-  
-  .stat-number {
-    font-size: 1.5em;
-    font-weight: bold;
-  }
-  
-  .stat-label {
-    font-size: 0.9em;
-    opacity: 0.8;
-  }
-  
-  /* Grid container */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
-    padding: 30px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-  
-  /* Individual card */
-  .card {
-    background: rgba(255,255,255,0.95);
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-  }
-  
-  .card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-  }
-  
-  .card img {
-    width: 100%;
-    height: 350px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-  
-  .card:hover img {
-    transform: scale(1.05);
-  }
-  
-  .card-content {
-    padding: 20px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .card-content h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.3em;
-    color: #1E1E2F;
-    font-weight: 600;
-  }
-  
-  .card-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 15px;
-  }
-  
-  .card-info p {
-    margin: 0;
-    font-size: 0.95em;
-    color: #555;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .icon {
-    font-size: 0.9em;
-    opacity: 0.7;
-  }
-  
-  .genre-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-top: 5px;
-  }
-  
-  .genre-tag {
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 0.8em;
-    font-weight: 500;
-  }
-  
-  .rating-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-    padding-top: 15px;
-    border-top: 1px solid rgba(0,0,0,0.1);
-  }
-  
-  .stars {
-    color: #ffd700;
-    font-size: 1.2em;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-  }
-  
-  .watch-btn {
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 0.9em;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-  
-  .watch-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  }
-  
-  /* No results message */
-  .no-results {
-    text-align: center;
-    color: white;
-    padding: 50px;
-    font-size: 1.2em;
-    grid-column: 1 / -1;
-  }
-  
-  /* Responsive design */
-  @media (max-width: 768px) {
-    header {
-      flex-direction: column;
-      gap: 15px;
-      padding: 15px 20px;
-    }
-    
-    .logo-section {
-      justify-content: center;
-    }
-    
-    .controls {
-      width: 100%;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    
-    #search {
-      width: 200px;
-    }
-    
-    #search:focus {
-      width: 250px;
-    }
-    
-    .stats-bar {
-      gap: 15px;
-    }
-    
-    .grid {
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      padding: 20px;
-      gap: 20px;
-    }
-  }
-  
-  /* Loading animation */
-  .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    grid-column: 1 / -1;
-  }
-  
-  .spinner {
-    border: 3px solid rgba(255,255,255,0.3);
-    border-top: 3px solid white;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-</style>
-</head>
-<header>
-  <div class="logo-section">
-    <div class="logo">CYBO</div>
-    <div class="title">Watched Shows</div>
-  </div>
-  <div class="controls">
-    <div class="search-container">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="search" placeholder="Search shows...">
-    </div>
-    <select id="sort">
-      <option value="name">Sort by Name</option>
-      <option value="date">Sort by Date</option>
-      <option value="rating">Sort by Rating</option>
-      <option value="genre">Sort by Genre</option>
-    </select>
-  </div>
-</header>
-
-<div class="stats-bar">
-  <div class="stat">
-    <div class="stat-number" id="totalShows">0</div>
-    <div class="stat-label">Total Shows</div>
-  </div>
-  <div class="stat">
-    <div class="stat-number" id="avgRating">0</div>
-    <div class="stat-label">Avg Rating</div>
-  </div>
-  <div class="stat">
-    <div class="stat-number" id="topGenre">-</div>
-    <div class="stat-label">Top Genre</div>
-  </div>
-</div>
-
-<body>
-
-
-<div class="grid" id="showsGrid">
-  <!-- Cards will be injected here dynamically -->
-</div>
-
-<script>
-const shows = [
-  {
-    poster: "https://i.postimg.cc/28zKrVTd/bcd84731a3eda4f4a306250769675065.jpg",
-    name: "One Piece",
-    date: "Oct 20, 1999 - Ongoing",
-    genre: "Drama, Action, Adventure, Comedy, Fantasy, Shounen",
-    rating: 5,
-    link: "https://hianime.to/one-piece-100"
-  },
-  {
-    poster: "https://i.postimg.cc/qRxWxnjR/30df93feaa422101659e14d0a2a2f582.jpg",
-    name: "Demon Slayer",
-    date: "Apr 6, 2019 - Ongoing",
-    genre: "Action, Demons, Historical, Shounen, Supernatural",
-    rating: 4,
-    link: "https://hianime.to/demon-slayer-kimetsu-no-yaiba-47"
-  },
-  {
-    poster: "https://i.postimg.cc/jjgyFVbP/54d3f59bcc7caf1539c701eb0a064ec9.png",
-    name: "Attack on Titan",
-    date: " Apr 7, 2013 - Nov 5, 2023",
-    genre: "Action, Drama, Fantasy, Military, Shounen",
-    rating: 5,
-    link: "https://hianime.to/attack-on-titan-112"
-  },
-  {
-    poster: "https://i.postimg.cc/nz2g5hLT/65f92e6e315a931ef872da4b312442b8.jpg",
-    name: "Solo Leveling",
-    date: " Jan 7, 2024 - Ongoing",
-    genre: "Action, Adventure, Fantasy",
-    rating: 5,
-    link: "https://hianime.to/solo-leveling-18718"
-  },
-  {
-    poster: "https://i.postimg.cc/j54Z530j/4303d95c719242ab6e459d477b0a8c08.jpg",
-    name: "Dan Da Dan",
-    date: "Oct 4, 2024 - Ongoing ",
-    genre: "Action, Comedy, Supernatural",
-    rating: 3,
-    link: "https://hianime.to/dan-da-dan-19319"
-  },
-  {
-    poster: "https://i.postimg.cc/vBrSnH9b/9cbcf87f54194742e7686119089478f8.jpg",
-    name: "Naruto Shippuden",
-    date: "Feb 15, 2007 - Mar 23, 2017",
-    genre: "Action, Adventure, Comedy, Martial, Arts, Shounen, Super Power",
-    rating: 3,
-    link: "https://hianime.to/naruto-shippuden-355"
-  },
-];
-
-// Advanced algorithms for data processing
-class ShowsManager {
-  constructor(shows) {
-    this.shows = shows;
-    this.filteredShows = shows;
-    this.currentSort = 'name';
-    this.searchQuery = '';
-  }
-  
-  // Optimized search algorithm using multiple criteria
-  search(query) {
-    this.searchQuery = query.toLowerCase().trim();
-    
-    if (!this.searchQuery) {
-      this.filteredShows = this.shows;
-      return this.filteredShows;
-    }
-    
-    // Multi-field fuzzy search algorithm
-    this.filteredShows = this.shows.filter(show => {
-      const nameMatch = show.name.toLowerCase().includes(this.searchQuery);
-      const genreMatch = show.genre.toLowerCase().includes(this.searchQuery);
-      const dateMatch = show.date.toLowerCase().includes(this.searchQuery);
-      
-      // Weighted scoring system
-      let score = 0;
-      if (nameMatch) score += 3; // Name has highest weight
-      if (genreMatch) score += 2; // Genre has medium weight  
-      if (dateMatch) score += 1; // Date has lowest weight
-      
-      return score > 0;
-    });
-    
-    return this.filteredShows;
-  }
-  
-  // Enhanced sorting algorithm with multiple criteria
-  sort(criteria) {
-    this.currentSort = criteria;
-    
-    const sortAlgorithms = {
-      name: (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }),
-      
-      date: (a, b) => {
-        // Advanced date parsing algorithm
-        const parseDate = (dateStr) => {
-          if (dateStr.includes('Ongoing')) {
-            return new Date(); // Ongoing shows get current date for sorting
-          }
-          
-          const startDate = dateStr.split(' - ')[0];
-          const parts = startDate.split(' ');
-          
-          if (parts.length >= 3) {
-            const month = this.getMonthNumber(parts[0]);
-            const day = parseInt(parts[1].replace(',', ''));
-            const year = parseInt(parts[2]);
-            
-            return new Date(year, month - 1, day);
-          }
-          
-          return new Date(0); // Fallback date
-        };
-        
-        return parseDate(b.date) - parseDate(a.date); // Most recent first
-      },
-      
-      rating: (a, b) => b.rating - a.rating || a.name.localeCompare(b.name), // Secondary sort by name
-      
-      genre: (a, b) => {
-        const primaryGenreA = a.genre.split(',')[0].trim();
-        const primaryGenreB = b.genre.split(',')[0].trim();
-        return primaryGenreA.localeCompare(primaryGenreB) || a.name.localeCompare(b.name);
-      }
-    };
-    
-    this.filteredShows.sort(sortAlgorithms[criteria] || sortAlgorithms.name);
-    return this.filteredShows;
-  }
-  
-  // Helper method for month name to number conversion
-  getMonthNumber(monthName) {
-    const months = {
-      'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
-      'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12
-    };
-    return months[monthName.toLowerCase().substr(0, 3)] || 1;
-  }
-  
-  // Statistics calculation algorithms
-  calculateStats() {
-    const totalShows = this.shows.length;
-    
-    const avgRating = totalShows > 0 
-      ? (this.shows.reduce((sum, show) => sum + show.rating, 0) / totalShows).toFixed(1)
-      : '0';
-    
-    // Genre frequency analysis
-    const genreCount = {};
-    this.shows.forEach(show => {
-      show.genre.split(',').forEach(genre => {
-        const cleanGenre = genre.trim();
-        genreCount[cleanGenre] = (genreCount[cleanGenre] || 0) + 1;
-      });
-    });
-    
-    const topGenre = Object.keys(genreCount).length > 0
-      ? Object.keys(genreCount).reduce((a, b) => genreCount[a] > genreCount[b] ? a : b)
-      : '-';
-    
-    return { totalShows, avgRating, topGenre };
-  }
-}
-
-// Initialize shows manager
-const showsManager = new ShowsManager(shows);
-
-// DOM manipulation and rendering algorithms
-function renderShows(showList) {
-  const grid = document.getElementById('showsGrid');
-  
-  if (showList.length === 0) {
-    grid.innerHTML = '<div class="no-results">No shows found matching your search 🔍</div>';
-    return;
-  }
-  
-  // Efficient DOM creation using DocumentFragment
-  const fragment = document.createDocumentFragment();
-  
-  showList.forEach(show => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    
-    // Generate genre tags
-    const genreTags = show.genre.split(',')
-      .map(genre => `<span class="genre-tag">${genre.trim()}</span>`)
-      .join('');
-    
-    // Generate star rating
-    const fullStars = Math.floor(show.rating);
-    const hasHalfStar = show.rating % 1 !== 0;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    
-    const starsHTML = '★'.repeat(fullStars) + 
-                      (hasHalfStar ? '½' : '') + 
-                      '☆'.repeat(emptyStars);
-    
-    card.innerHTML = `
-      <img src="${show.poster}" alt="${show.name} Poster" onerror="this.src='https://via.placeholder.com/300x400/666/white?text=No+Image'">
-      <div class="card-content">
-        <h3>${show.name}</h3>
-        <div class="card-info">
-          <p><span class="icon">📅</span> ${show.date}</p>
-          <p><span class="icon">🎭</span> Genres:</p>
-          <div class="genre-tags">${genreTags}</div>
-        </div>
-        <div class="rating-section">
-          <div>
-            <div style="font-size: 0.9em; color: #666; margin-bottom: 3px;">CYBO Rating</div>
-            <span class="stars">${starsHTML}</span>
-          </div>
-          ${show.link ? `<button class="watch-btn" onclick="window.open('${show.link}', '_blank')">Watch Now</button>` : ''}
-        </div>
-      </div>
-    `;
-    
-    fragment.appendChild(card);
-  });
-  
-  grid.innerHTML = '';
-  grid.appendChild(fragment);
-}
-
-// Update statistics display
-function updateStats() {
-  const stats = showsManager.calculateStats();
-  document.getElementById('totalShows').textContent = stats.totalShows;
-  document.getElementById('avgRating').textContent = stats.avgRating;
-  document.getElementById('topGenre').textContent = stats.topGenre;
-}
-
-// Debounced search for performance optimization
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
-
-const debouncedSearch = debounce((query) => {
-  const filtered = showsManager.search(query);
-  const sorted = showsManager.sort(showsManager.currentSort);
-  renderShows(sorted);
-}, 300);
-
-// Event listeners
-document.getElementById('search').addEventListener('input', (e) => {
-  debouncedSearch(e.target.value);
-});
-
-document.getElementById('sort').addEventListener('change', (e) => {
-  const sorted = showsManager.sort(e.target.value);
-  renderShows(sorted);
-});
-
-// Initial render
-renderShows(showsManager.shows);
-updateStats();
-
-// Add keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-  if (e.ctrlKey && e.key === 'f') {
-    e.preventDefault();
-    document.getElementById('search').focus();
-  }
-});
-</script>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CYBO • Watched Shows</title>
 <style>
   * {
     box-sizing: border-box;
   }
+   .footer {
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    position: relative;
+  }
+  
+  .footer::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(45deg, #f44369, #3e3b92);
+  }
+
+  .footer a {
+    color: #00faff;
+    text-decoration: none;
+  }
+
+  .footer a:hover {
+    text-decoration: underline;
+  }
   
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
+    padding-bottom: 40px;
   }
   
   /* Top bar */
@@ -709,6 +77,20 @@ document.addEventListener('keydown', (e) => {
   .title {
     font-size: 1.2em;
     opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .beta-tag {
+    font-size: 0.7em;
+    background: linear-gradient(45deg, #ff9500, #ffb347);
+    color: #000;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
   
   .controls {
@@ -806,17 +188,27 @@ document.addEventListener('keydown', (e) => {
     margin: 0 auto;
   }
   
-  /* Individual card */
+  /* Individual card with gradient border */
   .card {
-    background: rgba(255,255,255,0.95);
+    position: relative;
+    border-radius: 17px;
+    padding: 2px;
+    background: linear-gradient(45deg, #f44369, #3e3b92);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  
+  .card-inner {
+    background: rgba(40, 40, 55, 0.95);
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     display: flex;
     flex-direction: column;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
     backdrop-filter: blur(10px);
+    flex: 1;
   }
   
   .card:hover {
@@ -846,7 +238,7 @@ document.addEventListener('keydown', (e) => {
   .card-content h3 {
     margin: 0 0 10px 0;
     font-size: 1.3em;
-    color: #1E1E2F;
+    color: #ffffff;
     font-weight: 600;
   }
   
@@ -860,7 +252,7 @@ document.addEventListener('keydown', (e) => {
   .card-info p {
     margin: 0;
     font-size: 0.95em;
-    color: #555;
+    color: #cccccc;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -893,7 +285,7 @@ document.addEventListener('keydown', (e) => {
     align-items: center;
     margin-top: auto;
     padding-top: 15px;
-    border-top: 1px solid rgba(0,0,0,0.1);
+    border-top: 1px solid rgba(255,255,255,0.2);
   }
   
   .stars {
@@ -993,7 +385,7 @@ document.addEventListener('keydown', (e) => {
 <header>
   <div class="logo-section">
     <div class="logo">CYBO</div>
-    <div class="title">Watched Shows</div>
+    <div class="title">Watched Shows <span class="beta-tag">Beta</span></div>
   </div>
   <div class="controls">
     <div class="search-container">
@@ -1228,20 +620,22 @@ function renderShows(showList) {
                       '☆'.repeat(emptyStars);
     
     card.innerHTML = `
-      <img src="${show.poster}" alt="${show.name} Poster" onerror="this.src='https://via.placeholder.com/300x400/666/white?text=No+Image'">
-      <div class="card-content">
-        <h3>${show.name}</h3>
-        <div class="card-info">
-          <p><span class="icon">📅</span> ${show.date}</p>
-          <p><span class="icon">🎭</span> Genres:</p>
-          <div class="genre-tags">${genreTags}</div>
-        </div>
-        <div class="rating-section">
-          <div>
-            <div style="font-size: 0.9em; color: #666; margin-bottom: 3px;">CYBO Rating</div>
-            <span class="stars">${starsHTML}</span>
+      <div class="card-inner">
+        <img src="${show.poster}" alt="${show.name} Poster" onerror="this.src='https://via.placeholder.com/300x400/666/white?text=No+Image'">
+        <div class="card-content">
+          <h3>${show.name}</h3>
+          <div class="card-info">
+            <p><span class="icon">📅</span> ${show.date}</p>
+            <p><span class="icon">🎭</span> Genres:</p>
+            <div class="genre-tags">${genreTags}</div>
           </div>
-          ${show.link ? `<button class="watch-btn" onclick="window.open('${show.link}', '_blank')">Watch Now</button>` : ''}
+          <div class="rating-section">
+            <div>
+              <div style="font-size: 0.9em; color: #aaa; margin-bottom: 3px;">CYBO Rating</div>
+              <span class="stars">${starsHTML}</span>
+            </div>
+            ${show.link ? `<button class="watch-btn" onclick="window.open('${show.link}', '_blank')">Watch Now</button>` : ''}
+          </div>
         </div>
       </div>
     `;
@@ -1302,9 +696,9 @@ document.addEventListener('keydown', (e) => {
   }
 });
 </script>
-  <div class="footer">
+
+<div class="footer">
   <p>
-       Version: 0.1 (BETA)   <br />
     Coolest Young Brain Online 🌐🧠<br />
     Crafted in India with ❤️, and a curious mind.<br />
     Contact:
