@@ -11,6 +11,9 @@
       color: #e0e0e0;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     .banner {
       text-align: center;
@@ -20,7 +23,7 @@
     }
     .banner img {
       width: 100%;
-      height: 180px; /* expanded top and bottom */
+      height: 180px;
       display: block;
       object-fit: cover;
       object-position: center;
@@ -29,6 +32,7 @@
       max-width: 800px;
       margin: 2rem auto;
       padding: 1rem;
+      flex: 1;
     }
     h2 {
       border-bottom: 2px solid #333;
@@ -87,19 +91,37 @@
       resize: none;
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
     }
-    .congrats {
+    .congrats-box {
       display: none;
-      text-align: center;
-      margin-top: 2rem;
-      font-size: 1.4rem;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: #1e1e1e;
       color: #4caf50;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      font-size: 1.2rem;
       font-weight: bold;
-      animation: bounceIn 1s ease-in-out;
+      animation: fadeInOut 3s ease-in-out;
     }
-    @keyframes bounceIn {
-      0% { transform: scale(0.5); opacity: 0; }
-      60% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(1); }
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(20px); }
+      20% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(20px); }
+    }
+    footer {
+      background: #1f1f1f;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      border-top: 1px solid #333;
+      font-size: 0.9rem;
+      color: #bbb;
+    }
+    footer span {
+      display: block;
+      margin: 0.4rem 0;
     }
   </style>
 </head>
@@ -124,25 +146,43 @@
       <li class="task-item"><label><input type="checkbox">10:30 - 11:00 PM → Reflection & prep</label></li>
     </ul>
 
-    <div class="congrats" id="congrats">👍 Good work for today!</div>
-
     <h2>📝 Quick Notes</h2>
     <div class="notes-section">
       <textarea placeholder="Write your quick notes here..."></textarea>
     </div>
   </div>
 
+  <div class="congrats-box" id="congratsBox">👍 Good work for today!</div>
+
+  <footer>
+    <span>Coolest Young Brain Online 🌐🧠</span>
+    <span>Crafted in India with ❤️, and a curious mind.</span>
+    <span>© 2025 CYBO. All rights reserved.</span>
+  </footer>
+
   <script>
     const taskList = document.getElementById("taskList");
-    const congrats = document.getElementById("congrats");
+    const congratsBox = document.getElementById("congratsBox");
 
-    taskList.addEventListener("change", () => {
+    taskList.addEventListener("change", (e) => {
+      if (e.target.type === "checkbox") {
+        const li = e.target.closest(".task-item");
+        if (e.target.checked) {
+          taskList.appendChild(li); // move completed task to bottom
+        } else {
+          taskList.insertBefore(li, taskList.firstChild); // unchecked goes back to top
+        }
+      }
+      
       const checkboxes = taskList.querySelectorAll("input[type='checkbox']");
       const allChecked = Array.from(checkboxes).every(cb => cb.checked);
       if (allChecked) {
-        congrats.style.display = "block";
+        congratsBox.style.display = "block";
+        setTimeout(() => {
+          congratsBox.style.display = "none";
+        }, 3000);
       } else {
-        congrats.style.display = "none";
+        congratsBox.style.display = "none";
       }
     });
   </script>
