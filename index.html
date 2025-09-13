@@ -1,414 +1,150 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CYBO • Study Dashboard</title>
   <style>
-    :root{
-      --bg:#0f1724; --card:#111827; --muted:#9ca3af; --accent:#60a5fa;
-      --glass: rgba(255,255,255,0.03);
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      color-scheme: dark;
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 0;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0; background:linear-gradient(180deg,#071029 0%, #07172b 100%); color:#e6eef8;
-      min-height:100vh; padding:28px;
+    .banner {
+      text-align: center;
+      background-color: #1f1f1f;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+      overflow: hidden;
     }
-    .wrap{max-width:1100px;margin:0 auto; display:grid; grid-template-columns: 1fr 420px; gap:22px; align-items:start;}
-    header{grid-column:1 / -1; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:6px}
-    h1{font-size:20px; margin:0}
-    .sub{color:var(--muted); font-size:13px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:16px; border-radius:12px; box-shadow: 0 6px 18px rgba(2,6,23,0.6); border:1px solid rgba(255,255,255,0.02)}
-    /* timetable */
-    .timetable{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
-    .slot{background:var(--glass); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02)}
-    .slot .time{font-weight:600; font-size:13px}
-    .slot .title{color:var(--muted); margin-top:6px; font-size:14px}
-    /* right column */
-    .rightcol{display:flex; flex-direction:column; gap:12px}
-    /* tasks */
-    .tasks-list{margin-top:10px; display:flex; flex-direction:column; gap:8px; max-height:320px; overflow:auto; padding-right:6px}
-    .task{display:flex; gap:10px; align-items:center; padding:10px; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.015)}
-    .task .title{flex:1}
-    .task .meta{font-size:12px; color:var(--muted)}
-    .btn{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--accent); padding:8px 10px; border-radius:8px; cursor:pointer}
-    .btn:active{transform:translateY(1px)}
-    .controls{display:flex; gap:8px; margin-top:10px}
-    input[type="text"]{width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit}
-    select{padding:8px; border-radius:8px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:inherit}
-    .progress-wrap{margin-top:12px}
-    .progress{height:12px; background:rgba(255,255,255,0.04); border-radius:999px; overflow:hidden}
-    .progress > i{display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--accent), #7dd3fc)}
-    .small{font-size:12px; color:var(--muted)}
-    .footer-note{font-size:12px;color:var(--muted); margin-top:8px}
-    .top-row{display:flex; gap:10px; align-items:center}
-    .big-number{font-size:28px; font-weight:700}
-    .calendar-placeholder{padding:12px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02)); border:1px dashed rgba(255,255,255,0.03)}
-    /* responsive */
-    @media (max-width:980px){
-      .wrap{grid-template-columns:1fr; padding:16px}
-      .rightcol{order:2}
+    .banner img {
+      width: 100%;
+      height: 120px; /* crop top and bottom */
+      display: block;
+      object-fit: cover;
+      object-position: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    h2 {
+      border-bottom: 2px solid #333;
+      padding-bottom: 0.5rem;
+      margin-top: 2rem;
+    }
+    .task-list, .notes-section {
+      list-style: none;
+      padding: 0;
+    }
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1e1e1e;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .task-item:hover {
+      background: #2a2a2a;
+    }
+    .task-item input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border: 2px solid #4caf50;
+      border-radius: 6px;
+      margin-right: 1rem;
+      cursor: pointer;
+      position: relative;
+    }
+    .task-item input[type="checkbox"]:checked {
+      background-color: #4caf50;
+      border: 2px solid #4caf50;
+    }
+    .task-item input[type="checkbox"]:checked::after {
+      content: '\2714';
+      color: white;
+      position: absolute;
+      top: -2px;
+      left: 3px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .notes-section textarea {
+      width: 100%;
+      height: 150px;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      resize: none;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .congrats {
+      display: none;
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 1.4rem;
+      color: #4caf50;
+      font-weight: bold;
+      animation: bounceIn 1s ease-in-out;
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      60% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>CYBO • Study Dashboard</h1>
-        <div class="sub">Daily timetable — school 6:00–12:00 | JEE-focused plan</div>
-      </div>
-      <div style="display:flex; gap:10px; align-items:center">
-        <div class="small">Today: <strong id="todayLabel"></strong></div>
-        <button class="btn" id="resetBtn" title="Clear all local data">Reset Data</button>
-      </div>
-    </header>
-
-    <!-- left: timetable + today focus -->
-    <main>
-      <section class="card">
-        <div class="top-row" style="justify-content:space-between; align-items:center">
-          <div>
-            <div class="small">Daily Timetable</div>
-            <div style="font-weight:700; font-size:15px">School-first schedule</div>
-          </div>
-          <div class="small">School 6:00–12:00</div>
-        </div>
-
-        <div style="height:12px"></div>
-
-        <div class="timetable" id="timetable">
-          <!-- JS will render slots -->
-        </div>
-
-        <div style="height:14px"></div>
-
-        <div style="display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap">
-          <div style="min-width:220px" class="progress-wrap card" id="progressCard">
-            <div class="small">Today's Task Progress</div>
-            <div class="progress" style="margin-top:8px"><i id="progressBar"></i></div>
-            <div style="display:flex; justify-content:space-between; margin-top:8px">
-              <div class="small" id="taskCounts">0 / 0 completed</div>
-              <div class="small" id="progressPercent">0%</div>
-            </div>
-          </div>
-
-          <div style="flex:1; min-width:220px" class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center">
-              <div class="small">Today's Focus</div>
-              <div class="small" id="focusSubjectLabel">Physics</div>
-            </div>
-            <div style="margin-top:8px; font-size:14px; color:var(--muted)">Complete main practice blocks and the reflection step.</div>
-            <div class="footer-note">Tip: Click tasks to mark complete. Use the "Creative slot" at 7:00–7:30 PM for social media / journaling.</div>
-          </div>
-        </div>
-      </section>
-
-      <section style="margin-top:12px" class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center">
-          <div>
-            <div class="small">Google Calendar</div>
-            <div style="font-weight:700">Sync & schedule</div>
-          </div>
-          <div class="small">Placeholder</div>
-        </div>
-
-        <div style="height:10px"></div>
-        <div class="calendar-placeholder">
-          <div class="small" style="margin-bottom:8px">Calendar sync is not active in this demo file.</div>
-          <div style="display:flex; gap:8px; align-items:center">
-            <button class="btn" id="connectCalendar">Connect Calendar</button>
-            <button class="btn" id="autoPopulate">Auto-populate study slots</button>
-          </div>
-          <div class="small" style="margin-top:8px; color:var(--muted)">Click "Connect Calendar" to see instructions for Google Calendar integration (OAuth + API steps).</div>
-        </div>
-      </section>
-    </main>
-
-    <!-- right column: tasks -->
-    <aside class="rightcol">
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center">
-          <div>
-            <div class="small">Tasks</div>
-            <div style="font-weight:700">Task Manager</div>
-          </div>
-          <div class="small" id="streakLabel">Streak: 0</div>
-        </div>
-
-        <div style="height:12px"></div>
-
-        <div style="display:flex; gap:8px">
-          <select id="subjectSelect" title="Select subject">
-            <option>Physics</option>
-            <option>Maths</option>
-            <option>Chemistry</option>
-            <option>Revision</option>
-            <option>Mock Test</option>
-          </select>
-          <input id="taskInput" placeholder="Add new task (e.g., Chapter 5 problems)" type="text" />
-          <button class="btn" id="addTaskBtn">Add</button>
-        </div>
-
-        <div class="tasks-list" id="tasksList" aria-live="polite"></div>
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px">
-          <div class="small" id="lastAdded">No tasks yet</div>
-          <div style="display:flex; gap:8px">
-            <button class="btn" id="clearCompleted">Clear done</button>
-            <button class="btn" id="exportBtn">Export</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="small">Weekly Summary</div>
-        <div style="font-weight:700; font-size:18px; margin-top:6px" id="weeklyHours">0 hrs</div>
-        <div class="small" style="margin-top:8px; color:var(--muted)">This demo tracks only tasks and local progress. Full weekly analytics requires backend or persistent DB.</div>
-      </div>
-
-      <div class="card">
-        <div class="small">Quick Actions</div>
-        <div style="display:flex; gap:8px; margin-top:8px">
-          <button class="btn" id="markAllDone">Mark all done</button>
-          <button class="btn" id="clearAll">Clear all</button>
-        </div>
-      </div>
-    </aside>
-
+  <div class="banner">
+    <img src="https://i.postimg.cc/k5BvtQXx/OOLEST.png" alt="CYBO Banner">
   </div>
 
-<script>
-  // ---------- Data ----------
-  const timetableData = [
-    { time: "5:00 - 5:30 AM", title: "Wake up + quick breakfast" },
-    { time: "6:00 - 12:00 PM", title: "School (attend & note doubts)" },
-    { time: "12:00 - 1:00 PM", title: "Lunch + short rest" },
-    { time: "1:00 - 3:00 PM", title: "Physics / Maths problem-solving" },
-    { time: "3:00 - 4:00 PM", title: "Rest / Nap / Walk" },
-    { time: "4:00 - 6:00 PM", title: "Chemistry / Weak subject focus" },
-    { time: "6:00 - 7:00 PM", title: "Break (music / cycling / relax)" },
-    { time: "7:00 - 9:00 PM", title: "Mixed practice / chapter tests" },
-    { time: "9:00 - 9:30 PM", title: "Dinner + family time" },
-    { time: "9:30 - 10:30 PM", title: "Revision (notes / formulas)" },
-    { time: "10:30 - 11:00 PM", title: "Reflection & prep for next day" }
-  ];
+  <div class="container">
+    <h2>📋 Daily Tasks</h2>
+    <ul class="task-list" id="taskList">
+      <li class="task-item"><label><input type="checkbox">5:00 - 5:30 AM → Wake up + quick breakfast</label></li>
+      <li class="task-item"><label><input type="checkbox">6:00 - 12:00 PM → School (attend & note doubts)</label></li>
+      <li class="task-item"><label><input type="checkbox">12:00 - 1:00 PM → Lunch + short rest</label></li>
+      <li class="task-item"><label><input type="checkbox">1:00 - 3:00 PM → Physics / Maths</label></li>
+      <li class="task-item"><label><input type="checkbox">3:00 - 4:00 PM → Rest / Nap / Walk</label></li>
+      <li class="task-item"><label><input type="checkbox">4:00 - 6:00 PM → Chemistry / Weak subject</label></li>
+      <li class="task-item"><label><input type="checkbox">6:00 - 7:00 PM → Break (music / cycling)</label></li>
+      <li class="task-item"><label><input type="checkbox">7:00 - 9:00 PM → Mixed practice / chapter tests</label></li>
+      <li class="task-item"><label><input type="checkbox">9:00 - 9:30 PM → Dinner + family time</label></li>
+      <li class="task-item"><label><input type="checkbox">9:30 - 10:30 PM → Revision (notes / formulas)</label></li>
+      <li class="task-item"><label><input type="checkbox">10:30 - 11:00 PM → Reflection & prep</label></li>
+    </ul>
 
-  // ---------- DOM refs ----------
-  const timetableEl = document.getElementById('timetable');
-  const todayLabel = document.getElementById('todayLabel');
-  const focusSubjectLabel = document.getElementById('focusSubjectLabel');
-  const subjectSelect = document.getElementById('subjectSelect');
-  const taskInput = document.getElementById('taskInput');
-  const addTaskBtn = document.getElementById('addTaskBtn');
-  const tasksList = document.getElementById('tasksList');
-  const lastAdded = document.getElementById('lastAdded');
-  const progressBar = document.getElementById('progressBar');
-  const taskCounts = document.getElementById('taskCounts');
-  const progressPercent = document.getElementById('progressPercent');
-  const resetBtn = document.getElementById('resetBtn');
-  const clearCompletedBtn = document.getElementById('clearCompleted');
-  const exportBtn = document.getElementById('exportBtn');
-  const markAllDoneBtn = document.getElementById('markAllDone');
-  const clearAllBtn = document.getElementById('clearAll');
-  const connectCalendar = document.getElementById('connectCalendar');
-  const autoPopulate = document.getElementById('autoPopulate');
-  const streakLabel = document.getElementById('streakLabel');
+    <div class="congrats" id="congrats">👍 Good work for today!</div>
 
-  // ---------- Helper: local storage ----------
-  const TASKS_KEY = 'cybo_tasks_v1';
-  function loadTasks(){ try { return JSON.parse(localStorage.getItem(TASKS_KEY) || '[]'); } catch(e){ return []; } }
-  function saveTasks(arr){ localStorage.setItem(TASKS_KEY, JSON.stringify(arr)); }
+    <h2>📝 Quick Notes</h2>
+    <div class="notes-section">
+      <textarea placeholder="Write your quick notes here..."></textarea>
+    </div>
+  </div>
 
-  // ---------- Render timetable ----------
-  function renderTimetable(){
-    timetableEl.innerHTML = '';
-    for(const s of timetableData){
-      const slot = document.createElement('div');
-      slot.className = 'slot';
-      slot.innerHTML = `<div class="time">${s.time}</div><div class="title">${s.title}</div>`;
-      timetableEl.appendChild(slot);
-    }
-  }
+  <script>
+    const taskList = document.getElementById("taskList");
+    const congrats = document.getElementById("congrats");
 
-  // ---------- Tasks UI ----------
-  function renderTasks(){
-    const tasks = loadTasks();
-    tasksList.innerHTML = '';
-    if(tasks.length === 0){
-      tasksList.innerHTML = '<div class="small" style="color:var(--muted)">No tasks yet — add something above.</div>';
-    }
-    tasks.forEach(t => {
-      const el = document.createElement('div');
-      el.className = 'task';
-      el.innerHTML = `
-        <input type="checkbox" ${t.completed ? 'checked' : ''} data-id="${t.id}" />
-        <div class="title" style="text-decoration:${t.completed ? 'line-through' : 'none'}">${escapeHtml(t.title)}</div>
-        <div class="meta">${escapeHtml(t.subject)}</div>
-        <button class="btn" data-delete="${t.id}">Delete</button>
-      `;
-      tasksList.appendChild(el);
-    });
-    updateProgress();
-  }
-
-  // escape helper
-  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); }); }
-
-  // update progress
-  function updateProgress(){
-    const tasks = loadTasks();
-    const done = tasks.filter(t=>t.completed).length;
-    const total = tasks.length;
-    const percent = total === 0 ? 0 : Math.round((done/total)*100);
-    progressBar.style.width = percent + '%';
-    taskCounts.textContent = `${done} / ${total} completed`;
-    progressPercent.textContent = `${percent}%`;
-    // streak placeholder: count days with at least 1 completed task (very simple)
-    const streak = computeStreak(tasks);
-    streakLabel.textContent = 'Streak: ' + streak + 'd';
-  }
-
-  // simple streak: count unique days in tasks where any completed (demo)
-  function computeStreak(tasks){
-    const days = new Set();
-    tasks.forEach(t => {
-      if(t.completed && t.completedAt){
-        days.add(t.completedAt.split('T')[0]);
+    taskList.addEventListener("change", () => {
+      const checkboxes = taskList.querySelectorAll("input[type='checkbox']");
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      if (allChecked) {
+        congrats.style.display = "block";
+      } else {
+        congrats.style.display = "none";
       }
     });
-    return days.size;
-  }
-
-  // ---------- Task actions ----------
-  addTaskBtn.addEventListener('click', () => {
-    const title = taskInput.value.trim();
-    const subject = subjectSelect.value;
-    if(!title) return taskInput.focus();
-    const tasks = loadTasks();
-    const newTask = { id: Date.now().toString(), title, subject, completed:false, createdAt: new Date().toISOString() };
-    tasks.unshift(newTask);
-    saveTasks(tasks);
-    taskInput.value = '';
-    lastAdded.textContent = `Last: ${title} (${subject})`;
-    renderTasks();
-  });
-
-  // enter to add
-  taskInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') addTaskBtn.click(); });
-
-  // task toggle & delete using event delegation
-  tasksList.addEventListener('click', (e) => {
-    const cb = e.target.closest('input[type="checkbox"]');
-    if(cb && cb.dataset.id){
-      const id = cb.dataset.id;
-      const tasks = loadTasks();
-      const changed = tasks.map(t => {
-        if(t.id === id) {
-          const updated = {...t, completed: !t.completed};
-          if(updated.completed) updated.completedAt = new Date().toISOString();
-          return updated;
-        }
-        return t;
-      });
-      saveTasks(changed);
-      renderTasks();
-      return;
-    }
-    const del = e.target.closest('button[data-delete]');
-    if(del){
-      const id = del.dataset.delete;
-      const tasks = loadTasks().filter(t => t.id !== id);
-      saveTasks(tasks);
-      renderTasks();
-      return;
-    }
-  });
-
-  clearCompletedBtn.addEventListener('click', () => {
-    const tasks = loadTasks().filter(t => !t.completed);
-    saveTasks(tasks);
-    renderTasks();
-  });
-
-  markAllDoneBtn.addEventListener('click', () => {
-    const tasks = loadTasks().map(t => ({...t, completed:true, completedAt: new Date().toISOString()}));
-    saveTasks(tasks);
-    renderTasks();
-  });
-
-  clearAllBtn.addEventListener('click', () => {
-    if(confirm('Clear ALL tasks? This cannot be undone.')) {
-      saveTasks([]);
-      renderTasks();
-    }
-  });
-
-  resetBtn.addEventListener('click', () => {
-    if(confirm('Reset local dashboard data?')) {
-      localStorage.removeItem(TASKS_KEY);
-      renderTasks();
-      alert('Local data cleared. Reloaded state.');
-    }
-  });
-
-  exportBtn.addEventListener('click', () => {
-    const tasks = loadTasks();
-    const data = JSON.stringify(tasks, null, 2);
-    const blob = new Blob([data], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'cybo_tasks_export.json'; document.body.appendChild(a); a.click();
-    a.remove(); URL.revokeObjectURL(url);
-  });
-
-  // ---------- Calendar placeholders ----------
-  connectCalendar.addEventListener('click', () => {
-    alert(
-      'Google Calendar integration (demo placeholder):\n\n' +
-      'To enable sync you must:\n' +
-      '1) Create a Google Cloud project, enable Calendar API and create OAuth credentials.\n' +
-      '2) Implement OAuth flow in a backend (or use OAuth popup with proper client origins).\n' +
-      '3) Use Google Calendar API to read/write events (then map study slots to calendar events).\n\nThis file is a local demo; full integration requires server-side or proper OAuth setup.'
-    );
-  });
-
-  autoPopulate.addEventListener('click', () => {
-    if(!confirm('Auto-populate study slots as events in your Google Calendar? This is a demo action (no real calendar). Continue?')) return;
-    alert('Demo: study slots would be created. In real integration the app would push events via the Calendar API.');
-  });
-
-  // ---------- Init ----------
-  function init(){
-    renderTimetable();
-    renderTasks();
-    const today = new Date();
-    todayLabel.textContent = today.toLocaleDateString(undefined, { weekday:'long', year:'numeric', month:'short', day:'numeric' });
-    focusSubjectLabel.textContent = subjectSelect.value;
-    subjectSelect.addEventListener('change', ()=> focusSubjectLabel.textContent = subjectSelect.value);
-  }
-  init();
-
-  // ---------- small UX niceties ----------
-  // load sample tasks first time
-  (function seedOnce(){
-    if(localStorage.getItem('cybo_seed_done')) return;
-    const sample = [
-      {id: 't1', title:'Finish Physics chapter 5 problems', subject:'Physics', completed:false, createdAt:new Date().toISOString()},
-      {id: 't2', title:'NCERT Chemistry exercise: Alcohols', subject:'Chemistry', completed:false, createdAt:new Date().toISOString()},
-    ];
-    const existing = loadTasks();
-    if(existing.length === 0){
-      saveTasks(sample);
-    }
-    localStorage.setItem('cybo_seed_done','1');
-  })();
-
-  // rerender after seed
-  setTimeout(renderTasks, 300);
-
-</script>
+  </script>
 </body>
 </html>
