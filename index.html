@@ -1,831 +1,414 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBO • Watched Shows</title>
-<style>
-  * {
-    box-sizing: border-box; 
-  }
-   .footer {
-    background-color: #000;
-    color: #fff;
-    text-align: center;
-    padding: 20px 0;
-    margin-top: 40px;
-    position: relative;
-  }
-  
-  .footer::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(45deg, #f44369, #3e3b92);
-  }
-
-  .footer a {
-    color: #00faff;
-    text-decoration: none;
-  }
-
-  .footer a:hover {
-    text-decoration: underline;
-  }
-  
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding-bottom: 40px;
-  }
-  
-  /* Top bar */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 30px;
-    background: rgba(30, 30, 47, 0.95);
-    backdrop-filter: blur(10px);
-    color: white;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  
-  .logo-section {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  .logo {
-    font-weight: bold;
-    font-size: 1.8em;
-    background: linear-gradient(90deg, #f44369, #3e3b92);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  .title {
-    font-size: 1.2em;
-    opacity: 0.9;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .beta-tag {
-    font-size: 0.7em;
-    background: linear-gradient(45deg, #ff9500, #ffb347);
-    color: #000;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .controls {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  .search-container {
-    position: relative;
-  }
-  
-  #search {
-    padding: 10px 15px;
-    padding-left: 40px;
-    border-radius: 25px;
-    border: none;
-    background: rgba(255,255,255,0.1);
-    color: white;
-    width: 250px;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-  }
-  
-  #search::placeholder {
-    color: rgba(255,255,255,0.7);
-  }
-  
-  #search:focus {
-    outline: none;
-    background: rgba(255,255,255,0.2);
-    width: 300px;
-  }
-  
-  .search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255,255,255,0.7);
-  }
-  
-  select {
-    padding: 10px 15px;
-    border-radius: 20px;
-    border: none;
-    background: rgba(255,255,255,0.1);
-    color: white;
-    backdrop-filter: blur(10px);
-    cursor: pointer;
-  }
-  
-  select option {
-    background: #1E1E2F;
-    color: white;
-  }
-  
-  /* Stats Bar */
-  .stats-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    color: white;
-    gap: 25px;
-    flex-wrap: wrap;
-  }
-  
-  .stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    text-align: center;
-  }
-  
-  .stat-number {
-    font-size: 1.5em;
-    font-weight: bold;
-  }
-  
-  .stat-label {
-    font-size: 0.9em;
-    opacity: 0.8;
-  }
-  
-  /* Special styling for new features */
-  .feature-stat {
-    max-width: 200px;
-  }
-  
-  .feature-name {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #fff;
-    margin-bottom: 2px;
-  }
-  
-  .feature-details {
-    font-size: 0.8em;
-    opacity: 0.7;
-    color: #cccccc;
-    margin-bottom: 3px;
-  }
-  
-  /* Grid container */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
-    padding: 30px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-  
-  /* Individual card with gradient border */
-  .card {
-    position: relative;
-    border-radius: 17px;
-    padding: 2px;
-    background: linear-gradient(45deg, #f44369, #3e3b92);
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-  }
-  
-  .card-inner {
-    background: rgba(40, 40, 55, 0.95);
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-    backdrop-filter: blur(10px);
-    flex: 1;
-  }
-  
-  .card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-  }
-  
-  .card img {
-    width: 100%;
-    height: 350px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-  
-  .card:hover img {
-    transform: scale(1.05);
-  }
-  
-  .card-content {
-    padding: 20px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .card-content h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.3em;
-    color: #ffffff;
-    font-weight: 600;
-  }
-  
-  .card-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 15px;
-  }
-  
-  .card-info p {
-    margin: 0;
-    font-size: 0.95em;
-    color: #cccccc;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .icon {
-    font-size: 0.9em;
-    opacity: 0.7;
-  }
-  
-  .genre-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-top: 5px;
-  }
-  
-  .genre-tag {
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 0.8em;
-    font-weight: 500;
-  }
-  
-  .rating-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-    padding-top: 15px;
-    border-top: 1px solid rgba(255,255,255,0.2);
-  }
-  
-  .stars {
-    color: #ffd700;
-    font-size: 1.2em;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-  }
-  
-  .watch-btn {
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 0.9em;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-  
-  .watch-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  }
-  
-  /* No results message */
-  .no-results {
-    text-align: center;
-    color: white;
-    padding: 50px;
-    font-size: 1.2em;
-    grid-column: 1 / -1;
-  }
-  
-  /* Responsive design */
-  @media (max-width: 768px) {
-    header {
-      flex-direction: column;
-      gap: 15px;
-      padding: 15px 20px;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CYBO • Study Dashboard</title>
+  <style>
+    :root{
+      --bg:#0f1724; --card:#111827; --muted:#9ca3af; --accent:#60a5fa;
+      --glass: rgba(255,255,255,0.03);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color-scheme: dark;
     }
-    
-    .logo-section {
-      justify-content: center;
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:linear-gradient(180deg,#071029 0%, #07172b 100%); color:#e6eef8;
+      min-height:100vh; padding:28px;
     }
-    
-    .controls {
-      width: 100%;
-      justify-content: center;
-      flex-wrap: wrap;
+    .wrap{max-width:1100px;margin:0 auto; display:grid; grid-template-columns: 1fr 420px; gap:22px; align-items:start;}
+    header{grid-column:1 / -1; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:6px}
+    h1{font-size:20px; margin:0}
+    .sub{color:var(--muted); font-size:13px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:16px; border-radius:12px; box-shadow: 0 6px 18px rgba(2,6,23,0.6); border:1px solid rgba(255,255,255,0.02)}
+    /* timetable */
+    .timetable{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .slot{background:var(--glass); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02)}
+    .slot .time{font-weight:600; font-size:13px}
+    .slot .title{color:var(--muted); margin-top:6px; font-size:14px}
+    /* right column */
+    .rightcol{display:flex; flex-direction:column; gap:12px}
+    /* tasks */
+    .tasks-list{margin-top:10px; display:flex; flex-direction:column; gap:8px; max-height:320px; overflow:auto; padding-right:6px}
+    .task{display:flex; gap:10px; align-items:center; padding:10px; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.015)}
+    .task .title{flex:1}
+    .task .meta{font-size:12px; color:var(--muted)}
+    .btn{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--accent); padding:8px 10px; border-radius:8px; cursor:pointer}
+    .btn:active{transform:translateY(1px)}
+    .controls{display:flex; gap:8px; margin-top:10px}
+    input[type="text"]{width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit}
+    select{padding:8px; border-radius:8px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:inherit}
+    .progress-wrap{margin-top:12px}
+    .progress{height:12px; background:rgba(255,255,255,0.04); border-radius:999px; overflow:hidden}
+    .progress > i{display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--accent), #7dd3fc)}
+    .small{font-size:12px; color:var(--muted)}
+    .footer-note{font-size:12px;color:var(--muted); margin-top:8px}
+    .top-row{display:flex; gap:10px; align-items:center}
+    .big-number{font-size:28px; font-weight:700}
+    .calendar-placeholder{padding:12px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02)); border:1px dashed rgba(255,255,255,0.03)}
+    /* responsive */
+    @media (max-width:980px){
+      .wrap{grid-template-columns:1fr; padding:16px}
+      .rightcol{order:2}
     }
-    
-    #search {
-      width: 200px;
-    }
-    
-    #search:focus {
-      width: 250px;
-    }
-    
-    .stats-bar {
-      gap: 15px;
-    }
-    
-    .stat {
-      min-width: 120px;
-    }
-    
-    .grid {
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      padding: 20px;
-      gap: 20px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .stats-bar {
-      flex-direction: column;
-      gap: 20px;
-    }
-    
-    .stats-bar .stat {
-      width: 100%;
-      max-width: none;
-    }
-  }
-  
-  /* Loading animation */
-  .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    grid-column: 1 / -1;
-  }
-  
-  .spinner {
-    border: 3px solid rgba(255,255,255,0.3);
-    border-top: 3px solid white;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-</style>
+  </style>
 </head>
 <body>
-<header>
-  <div class="logo-section">
-    <div class="logo">CYBO</div>
-    <div class="title">Watched Shows <span class="beta-tag">Beta</span></div>
-  </div>
-  <div class="controls">
-    <div class="search-container">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="search" placeholder="Search shows...">
-    </div>
-    <select id="sort">
-      <option value="name">Sort by Name</option>
-      <option value="date">Sort by Date</option>
-      <option value="rating">Sort by Rating</option>
-      <option value="genre">Sort by Genre</option>
-    </select>
-  </div>
-</header>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>CYBO • Study Dashboard</h1>
+        <div class="sub">Daily timetable — school 6:00–12:00 | JEE-focused plan</div>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center">
+        <div class="small">Today: <strong id="todayLabel"></strong></div>
+        <button class="btn" id="resetBtn" title="Clear all local data">Reset Data</button>
+      </div>
+    </header>
 
-<div class="stats-bar">
-  <div class="stat">
-    <div class="stat-number" id="totalShows">0</div>
-    <div class="stat-label">Total Shows</div>
-  </div>
-  <div class="stat">
-    <div class="stat-number" id="avgRating">0</div>
-    <div class="stat-label">Avg Rating</div>
-  </div>
-  <div class="stat">
-    <div class="stat-number" id="topGenre">-</div>
-    <div class="stat-label">Top Genre</div>
-  </div>
-  <div class="stat feature-stat">
-    <div class="feature-name" id="favoriteCharacter">Luffy</div>
-    <div class="feature-details">One piece</div>
-    <div class="stat-label">Favorite Character</div>
-  </div>
-  <div class="stat feature-stat">
-    <div class="feature-name" id="currentlyWatching">Dan Da Dan</div>
-    <div class="feature-details">On episode: <span id="currentEpisode">8</span></div>
-    <div class="stat-label">Currently Watching</div>
-  </div>
-</div>
-
-<div class="grid" id="showsGrid">
-  <!-- Cards will be injected here dynamically -->
-</div>
-
-<script>
-const shows = [
-  {
-    poster: "https://cdn.noitatnemucod.net/thumbnail/300x400/100/bcd84731a3eda4f4a306250769675065.jpg",
-    name: "One Piece",
-    date: "Oct 20, 1999 - Ongoing",
-    genre: "Drama, Action, Adventure, Comedy, Fantasy, Shounen",
-    rating: 5,
-    link: "https://hianime.to/one-piece-100"
-  },
-  {
-    poster: "https://i.postimg.cc/qRxWxnjR/30df93feaa422101659e14d0a2a2f582.jpg",
-    name: "Demon Slayer",
-    date: "Apr 6, 2019 - Ongoing",
-    genre: "Action, Demons, Historical, Shounen, Supernatural",
-    rating: 4,
-    link: "https://hianime.to/demon-slayer-kimetsu-no-yaiba-47"
-  },
-  {
-    poster: "https://i.postimg.cc/jjgyFVbP/54d3f59bcc7caf1539c701eb0a064ec9.png",
-    name: "Attack on Titan",
-    date: " Apr 7, 2013 - Nov 5, 2023",
-    genre: "Action, Drama, Fantasy, Military, Shounen",
-    rating: 5,
-    link: "https://hianime.to/attack-on-titan-112"
-  },
-  {
-    poster: "https://i.postimg.cc/nz2g5hLT/65f92e6e315a931ef872da4b312442b8.jpg",
-    name: "Solo Leveling",
-    date: " Jan 7, 2024 - Ongoing",
-    genre: "Action, Adventure, Fantasy",
-    rating: 5,
-    link: "https://hianime.to/solo-leveling-18718"
-  },
-  {
-    poster: "https://i.postimg.cc/j54Z530j/4303d95c719242ab6e459d477b0a8c08.jpg",
-    name: "Dan Da Dan",
-    date: "Oct 4, 2024 - Ongoing ",
-    genre: "Action, Comedy, Supernatural",
-    rating: 3,
-    link: "https://hianime.to/dan-da-dan-19319"
-  },
-  {
-    poster: "https://i.postimg.cc/vBrSnH9b/9cbcf87f54194742e7686119089478f8.jpg",
-    name: "Naruto Shippuden",
-    date: "Feb 15, 2007 - Mar 23, 2017",
-    genre: "Action, Adventure, Comedy, Martial, Arts, Shounen, Super Power",
-    rating: 3,
-    link: "https://hianime.to/naruto-shippuden-355"
-  },
-   {
-    poster: "https://i.postimg.cc/TwVx6VCd/88d7186ebed8856c731b2dd132aaf68a.jpg",
-    name: "Suzume's Locking-Up",
-    date: "Nov 11, 2022",
-    genre: "Mystery, Fantasy, Sci-Fi",
-    rating: 2.5,
-    link: "https://hianime.to/suzumes-doorlocking-18190"
-  },
-  {
-    poster: "https://i.postimg.cc/gJFpQSyt/16eec56baf8f3fcc6430607f58ce3d12.jpg",
-    name: "Your Name",
-    date: "Aug 26, 2016",
-    genre: "Drama, Romance, School, Supernatural",
-    rating: 4.5,
-    link: "https://hianime.to/your-name-10"
-  },
-  {
-    poster: "https://i.postimg.cc/SKKYjKwb/5e61f3e7c0045e46b670d31a5bb39c68.jpg",
-    name: "Death Note",
-    date: "Oct 4, 2006 to Jun 27, 2007",
-    genre: "Mystery, Shounen, Supernatural, Police, Psychological, Thriller",
-    rating: 3,
-    link: "https://hianime.to/death-note-60"
-  },
-  {
-    poster: "https://i.postimg.cc/L6ftMnMy/download.jpg",
-    name: "Pokemon",
-    date: "April 1, 1997 - Ongoing",
-    genre: "Adventure, Action, Comedy, Fantasy",
-    rating: 4,
-    link: "https://hianime.to/search?keyword=pokemon"
-  },
-  {
-    poster: "https://i.postimg.cc/XJmsQmwX/37eb9509a2ae0010f64b0170a03b5a13.jpg",
-    name: "Weathering With You",
-    date: " Jul 19, 2019",
-    genre: "Drama, Fantasy, Romance, Slice of Life",
-    rating: 3,
-    link: "https://hianime.to/watch/weathering-with-you-111?ep=71785&c_id=7765688&c_type=episode"
-  },
- 
-];
-
-// Configuration for new features - EDIT THESE VALUES
-const userPreferences = {
-  favoriteCharacter: "Sung Jinwoo",
-  favoriteCharacterShow: "Solo leveling",
-  currentlyWatching: "One Piece",
-  currentEpisode: 130
-};
-
-// Advanced algorithms for data processing
-class ShowsManager {
-  constructor(shows) {
-    this.shows = shows;
-    this.filteredShows = shows;
-    this.currentSort = 'name';
-    this.searchQuery = '';
-  }
-  
-  // Optimized search algorithm using multiple criteria
-  search(query) {
-    this.searchQuery = query.toLowerCase().trim();
-    
-    if (!this.searchQuery) {
-      this.filteredShows = this.shows;
-      return this.filteredShows;
-    }
-    
-    // Multi-field fuzzy search algorithm
-    this.filteredShows = this.shows.filter(show => {
-      const nameMatch = show.name.toLowerCase().includes(this.searchQuery);
-      const genreMatch = show.genre.toLowerCase().includes(this.searchQuery);
-      const dateMatch = show.date.toLowerCase().includes(this.searchQuery);
-      
-      // Weighted scoring system
-      let score = 0;
-      if (nameMatch) score += 3; // Name has highest weight
-      if (genreMatch) score += 2; // Genre has medium weight  
-      if (dateMatch) score += 1; // Date has lowest weight
-      
-      return score > 0;
-    });
-    
-    return this.filteredShows;
-  }
-  
-  // Enhanced sorting algorithm with multiple criteria
-  sort(criteria) {
-    this.currentSort = criteria;
-    
-    const sortAlgorithms = {
-      name: (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }),
-      
-      date: (a, b) => {
-        // Advanced date parsing algorithm
-        const parseDate = (dateStr) => {
-          if (dateStr.includes('Ongoing')) {
-            return new Date(); // Ongoing shows get current date for sorting
-          }
-          
-          const startDate = dateStr.split(' - ')[0];
-          const parts = startDate.split(' ');
-          
-          if (parts.length >= 3) {
-            const month = this.getMonthNumber(parts[0]);
-            const day = parseInt(parts[1].replace(',', ''));
-            const year = parseInt(parts[2]);
-            
-            return new Date(year, month - 1, day);
-          }
-          
-          return new Date(0); // Fallback date
-        };
-        
-        return parseDate(b.date) - parseDate(a.date); // Most recent first
-      },
-      
-      rating: (a, b) => b.rating - a.rating || a.name.localeCompare(b.name), // Secondary sort by name
-      
-      genre: (a, b) => {
-        const primaryGenreA = a.genre.split(',')[0].trim();
-        const primaryGenreB = b.genre.split(',')[0].trim();
-        return primaryGenreA.localeCompare(primaryGenreB) || a.name.localeCompare(b.name);
-      }
-    };
-    
-    this.filteredShows.sort(sortAlgorithms[criteria] || sortAlgorithms.name);
-    return this.filteredShows;
-  }
-  
-  // Helper method for month name to number conversion
-  getMonthNumber(monthName) {
-    const months = {
-      'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
-      'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12
-    };
-    return months[monthName.toLowerCase().substr(0, 3)] || 1;
-  }
-  
-  // Statistics calculation algorithms
-  calculateStats() {
-    const totalShows = this.shows.length;
-    
-    const avgRating = totalShows > 0 
-      ? (this.shows.reduce((sum, show) => sum + show.rating, 0) / totalShows).toFixed(1)
-      : '0';
-    
-    // Genre frequency analysis
-    const genreCount = {};
-    this.shows.forEach(show => {
-      show.genre.split(',').forEach(genre => {
-        const cleanGenre = genre.trim();
-        genreCount[cleanGenre] = (genreCount[cleanGenre] || 0) + 1;
-      });
-    });
-    
-    const topGenre = Object.keys(genreCount).length > 0
-      ? Object.keys(genreCount).reduce((a, b) => genreCount[a] > genreCount[b] ? a : b)
-      : '-';
-    
-    return { totalShows, avgRating, topGenre };
-  }
-}
-
-// Initialize shows manager
-const showsManager = new ShowsManager(shows);
-
-// DOM manipulation and rendering algorithms
-function renderShows(showList) {
-  const grid = document.getElementById('showsGrid');
-  
-  if (showList.length === 0) {
-    grid.innerHTML = '<div class="no-results">No shows found matching your search 🔍</div>';
-    return;
-  }
-  
-  // Efficient DOM creation using DocumentFragment
-  const fragment = document.createDocumentFragment();
-  
-  showList.forEach(show => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    
-    // Generate genre tags
-    const genreTags = show.genre.split(',')
-      .map(genre => `<span class="genre-tag">${genre.trim()}</span>`)
-      .join('');
-    
-    // Generate star rating
-    const fullStars = Math.floor(show.rating);
-    const hasHalfStar = show.rating % 1 !== 0;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    
-    const starsHTML = '★'.repeat(fullStars) + 
-                      (hasHalfStar ? '½' : '') + 
-                      '☆'.repeat(emptyStars);
-    
-    card.innerHTML = `
-      <div class="card-inner">
-        <img src="${show.poster}" alt="${show.name} Poster" onerror="this.src='https://via.placeholder.com/300x400/666/white?text=No+Image'">
-        <div class="card-content">
-          <h3>${show.name}</h3>
-          <div class="card-info">
-            <p><span class="icon">📅</span> ${show.date}</p>
-            <p><span class="icon">🎭</span> Genres:</p>
-            <div class="genre-tags">${genreTags}</div>
+    <!-- left: timetable + today focus -->
+    <main>
+      <section class="card">
+        <div class="top-row" style="justify-content:space-between; align-items:center">
+          <div>
+            <div class="small">Daily Timetable</div>
+            <div style="font-weight:700; font-size:15px">School-first schedule</div>
           </div>
-          <div class="rating-section">
-            <div>
-              <div style="font-size: 0.9em; color: #aaa; margin-bottom: 3px;">CYBO Rating</div>
-              <span class="stars">${starsHTML}</span>
+          <div class="small">School 6:00–12:00</div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="timetable" id="timetable">
+          <!-- JS will render slots -->
+        </div>
+
+        <div style="height:14px"></div>
+
+        <div style="display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap">
+          <div style="min-width:220px" class="progress-wrap card" id="progressCard">
+            <div class="small">Today's Task Progress</div>
+            <div class="progress" style="margin-top:8px"><i id="progressBar"></i></div>
+            <div style="display:flex; justify-content:space-between; margin-top:8px">
+              <div class="small" id="taskCounts">0 / 0 completed</div>
+              <div class="small" id="progressPercent">0%</div>
             </div>
-            ${show.link ? `<button class="watch-btn" onclick="window.open('${show.link}', '_blank')">Watch Now</button>` : ''}
+          </div>
+
+          <div style="flex:1; min-width:220px" class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center">
+              <div class="small">Today's Focus</div>
+              <div class="small" id="focusSubjectLabel">Physics</div>
+            </div>
+            <div style="margin-top:8px; font-size:14px; color:var(--muted)">Complete main practice blocks and the reflection step.</div>
+            <div class="footer-note">Tip: Click tasks to mark complete. Use the "Creative slot" at 7:00–7:30 PM for social media / journaling.</div>
+          </div>
+        </div>
+      </section>
+
+      <section style="margin-top:12px" class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center">
+          <div>
+            <div class="small">Google Calendar</div>
+            <div style="font-weight:700">Sync & schedule</div>
+          </div>
+          <div class="small">Placeholder</div>
+        </div>
+
+        <div style="height:10px"></div>
+        <div class="calendar-placeholder">
+          <div class="small" style="margin-bottom:8px">Calendar sync is not active in this demo file.</div>
+          <div style="display:flex; gap:8px; align-items:center">
+            <button class="btn" id="connectCalendar">Connect Calendar</button>
+            <button class="btn" id="autoPopulate">Auto-populate study slots</button>
+          </div>
+          <div class="small" style="margin-top:8px; color:var(--muted)">Click "Connect Calendar" to see instructions for Google Calendar integration (OAuth + API steps).</div>
+        </div>
+      </section>
+    </main>
+
+    <!-- right column: tasks -->
+    <aside class="rightcol">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center">
+          <div>
+            <div class="small">Tasks</div>
+            <div style="font-weight:700">Task Manager</div>
+          </div>
+          <div class="small" id="streakLabel">Streak: 0</div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div style="display:flex; gap:8px">
+          <select id="subjectSelect" title="Select subject">
+            <option>Physics</option>
+            <option>Maths</option>
+            <option>Chemistry</option>
+            <option>Revision</option>
+            <option>Mock Test</option>
+          </select>
+          <input id="taskInput" placeholder="Add new task (e.g., Chapter 5 problems)" type="text" />
+          <button class="btn" id="addTaskBtn">Add</button>
+        </div>
+
+        <div class="tasks-list" id="tasksList" aria-live="polite"></div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px">
+          <div class="small" id="lastAdded">No tasks yet</div>
+          <div style="display:flex; gap:8px">
+            <button class="btn" id="clearCompleted">Clear done</button>
+            <button class="btn" id="exportBtn">Export</button>
           </div>
         </div>
       </div>
-    `;
-    
-    fragment.appendChild(card);
-  });
-  
-  grid.innerHTML = '';
-  grid.appendChild(fragment);
-}
 
-// Update statistics display
-function updateStats() {
-  const stats = showsManager.calculateStats();
-  document.getElementById('totalShows').textContent = stats.totalShows;
-  document.getElementById('avgRating').textContent = stats.avgRating;
-  document.getElementById('topGenre').textContent = stats.topGenre;
-}
+      <div class="card">
+        <div class="small">Weekly Summary</div>
+        <div style="font-weight:700; font-size:18px; margin-top:6px" id="weeklyHours">0 hrs</div>
+        <div class="small" style="margin-top:8px; color:var(--muted)">This demo tracks only tasks and local progress. Full weekly analytics requires backend or persistent DB.</div>
+      </div>
 
-// Update user preferences display
-function updateUserPreferences() {
-  document.getElementById('favoriteCharacter').textContent = userPreferences.favoriteCharacter;
-  document.querySelector('.feature-stat:nth-of-type(4) .feature-details').textContent = `from ${userPreferences.favoriteCharacterShow}`;
-  
-  document.getElementById('currentlyWatching').textContent = userPreferences.currentlyWatching;
-  document.getElementById('currentEpisode').textContent = userPreferences.currentEpisode;
-}
+      <div class="card">
+        <div class="small">Quick Actions</div>
+        <div style="display:flex; gap:8px; margin-top:8px">
+          <button class="btn" id="markAllDone">Mark all done</button>
+          <button class="btn" id="clearAll">Clear all</button>
+        </div>
+      </div>
+    </aside>
 
-// Function to update user preferences (you can call this to change values)
-function setUserPreferences(character, characterShow, watchingShow, episode) {
-  userPreferences.favoriteCharacter = character;
-  userPreferences.favoriteCharacterShow = characterShow;
-  userPreferences.currentlyWatching = watchingShow;
-  userPreferences.currentEpisode = episode;
-  updateUserPreferences();
-}
+  </div>
 
-// Debounced search for performance optimization
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
+<script>
+  // ---------- Data ----------
+  const timetableData = [
+    { time: "5:00 - 5:30 AM", title: "Wake up + quick breakfast" },
+    { time: "6:00 - 12:00 PM", title: "School (attend & note doubts)" },
+    { time: "12:00 - 1:00 PM", title: "Lunch + short rest" },
+    { time: "1:00 - 3:00 PM", title: "Physics / Maths problem-solving" },
+    { time: "3:00 - 4:00 PM", title: "Rest / Nap / Walk" },
+    { time: "4:00 - 6:00 PM", title: "Chemistry / Weak subject focus" },
+    { time: "6:00 - 7:00 PM", title: "Break (music / cycling / relax)" },
+    { time: "7:00 - 9:00 PM", title: "Mixed practice / chapter tests" },
+    { time: "9:00 - 9:30 PM", title: "Dinner + family time" },
+    { time: "9:30 - 10:30 PM", title: "Revision (notes / formulas)" },
+    { time: "10:30 - 11:00 PM", title: "Reflection & prep for next day" }
+  ];
 
-const debouncedSearch = debounce((query) => {
-  const filtered = showsManager.search(query);
-  const sorted = showsManager.sort(showsManager.currentSort);
-  renderShows(sorted);
-}, 300);
+  // ---------- DOM refs ----------
+  const timetableEl = document.getElementById('timetable');
+  const todayLabel = document.getElementById('todayLabel');
+  const focusSubjectLabel = document.getElementById('focusSubjectLabel');
+  const subjectSelect = document.getElementById('subjectSelect');
+  const taskInput = document.getElementById('taskInput');
+  const addTaskBtn = document.getElementById('addTaskBtn');
+  const tasksList = document.getElementById('tasksList');
+  const lastAdded = document.getElementById('lastAdded');
+  const progressBar = document.getElementById('progressBar');
+  const taskCounts = document.getElementById('taskCounts');
+  const progressPercent = document.getElementById('progressPercent');
+  const resetBtn = document.getElementById('resetBtn');
+  const clearCompletedBtn = document.getElementById('clearCompleted');
+  const exportBtn = document.getElementById('exportBtn');
+  const markAllDoneBtn = document.getElementById('markAllDone');
+  const clearAllBtn = document.getElementById('clearAll');
+  const connectCalendar = document.getElementById('connectCalendar');
+  const autoPopulate = document.getElementById('autoPopulate');
+  const streakLabel = document.getElementById('streakLabel');
 
-// Event listeners
-document.getElementById('search').addEventListener('input', (e) => {
-  debouncedSearch(e.target.value);
-});
+  // ---------- Helper: local storage ----------
+  const TASKS_KEY = 'cybo_tasks_v1';
+  function loadTasks(){ try { return JSON.parse(localStorage.getItem(TASKS_KEY) || '[]'); } catch(e){ return []; } }
+  function saveTasks(arr){ localStorage.setItem(TASKS_KEY, JSON.stringify(arr)); }
 
-document.getElementById('sort').addEventListener('change', (e) => {
-  const sorted = showsManager.sort(e.target.value);
-  renderShows(sorted);
-});
-
-// Initial render
-renderShows(showsManager.shows);
-updateStats();
-updateUserPreferences();
-
-// Add keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-  if (e.ctrlKey && e.key === 'f') {
-    e.preventDefault();
-    document.getElementById('search').focus();
+  // ---------- Render timetable ----------
+  function renderTimetable(){
+    timetableEl.innerHTML = '';
+    for(const s of timetableData){
+      const slot = document.createElement('div');
+      slot.className = 'slot';
+      slot.innerHTML = `<div class="time">${s.time}</div><div class="title">${s.title}</div>`;
+      timetableEl.appendChild(slot);
+    }
   }
-});
 
-// Example function to demonstrate how to update preferences
-// You can call this in the browser console or create buttons to trigger it
-console.log('To update preferences, use: setUserPreferences("CharacterName", "ShowName", "CurrentShow", EpisodeNumber)');
-console.log('Example: setUserPreferences("Goku", "Dragon Ball Z", "Jujutsu Kaisen", 15)');
+  // ---------- Tasks UI ----------
+  function renderTasks(){
+    const tasks = loadTasks();
+    tasksList.innerHTML = '';
+    if(tasks.length === 0){
+      tasksList.innerHTML = '<div class="small" style="color:var(--muted)">No tasks yet — add something above.</div>';
+    }
+    tasks.forEach(t => {
+      const el = document.createElement('div');
+      el.className = 'task';
+      el.innerHTML = `
+        <input type="checkbox" ${t.completed ? 'checked' : ''} data-id="${t.id}" />
+        <div class="title" style="text-decoration:${t.completed ? 'line-through' : 'none'}">${escapeHtml(t.title)}</div>
+        <div class="meta">${escapeHtml(t.subject)}</div>
+        <button class="btn" data-delete="${t.id}">Delete</button>
+      `;
+      tasksList.appendChild(el);
+    });
+    updateProgress();
+  }
+
+  // escape helper
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); }); }
+
+  // update progress
+  function updateProgress(){
+    const tasks = loadTasks();
+    const done = tasks.filter(t=>t.completed).length;
+    const total = tasks.length;
+    const percent = total === 0 ? 0 : Math.round((done/total)*100);
+    progressBar.style.width = percent + '%';
+    taskCounts.textContent = `${done} / ${total} completed`;
+    progressPercent.textContent = `${percent}%`;
+    // streak placeholder: count days with at least 1 completed task (very simple)
+    const streak = computeStreak(tasks);
+    streakLabel.textContent = 'Streak: ' + streak + 'd';
+  }
+
+  // simple streak: count unique days in tasks where any completed (demo)
+  function computeStreak(tasks){
+    const days = new Set();
+    tasks.forEach(t => {
+      if(t.completed && t.completedAt){
+        days.add(t.completedAt.split('T')[0]);
+      }
+    });
+    return days.size;
+  }
+
+  // ---------- Task actions ----------
+  addTaskBtn.addEventListener('click', () => {
+    const title = taskInput.value.trim();
+    const subject = subjectSelect.value;
+    if(!title) return taskInput.focus();
+    const tasks = loadTasks();
+    const newTask = { id: Date.now().toString(), title, subject, completed:false, createdAt: new Date().toISOString() };
+    tasks.unshift(newTask);
+    saveTasks(tasks);
+    taskInput.value = '';
+    lastAdded.textContent = `Last: ${title} (${subject})`;
+    renderTasks();
+  });
+
+  // enter to add
+  taskInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') addTaskBtn.click(); });
+
+  // task toggle & delete using event delegation
+  tasksList.addEventListener('click', (e) => {
+    const cb = e.target.closest('input[type="checkbox"]');
+    if(cb && cb.dataset.id){
+      const id = cb.dataset.id;
+      const tasks = loadTasks();
+      const changed = tasks.map(t => {
+        if(t.id === id) {
+          const updated = {...t, completed: !t.completed};
+          if(updated.completed) updated.completedAt = new Date().toISOString();
+          return updated;
+        }
+        return t;
+      });
+      saveTasks(changed);
+      renderTasks();
+      return;
+    }
+    const del = e.target.closest('button[data-delete]');
+    if(del){
+      const id = del.dataset.delete;
+      const tasks = loadTasks().filter(t => t.id !== id);
+      saveTasks(tasks);
+      renderTasks();
+      return;
+    }
+  });
+
+  clearCompletedBtn.addEventListener('click', () => {
+    const tasks = loadTasks().filter(t => !t.completed);
+    saveTasks(tasks);
+    renderTasks();
+  });
+
+  markAllDoneBtn.addEventListener('click', () => {
+    const tasks = loadTasks().map(t => ({...t, completed:true, completedAt: new Date().toISOString()}));
+    saveTasks(tasks);
+    renderTasks();
+  });
+
+  clearAllBtn.addEventListener('click', () => {
+    if(confirm('Clear ALL tasks? This cannot be undone.')) {
+      saveTasks([]);
+      renderTasks();
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    if(confirm('Reset local dashboard data?')) {
+      localStorage.removeItem(TASKS_KEY);
+      renderTasks();
+      alert('Local data cleared. Reloaded state.');
+    }
+  });
+
+  exportBtn.addEventListener('click', () => {
+    const tasks = loadTasks();
+    const data = JSON.stringify(tasks, null, 2);
+    const blob = new Blob([data], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'cybo_tasks_export.json'; document.body.appendChild(a); a.click();
+    a.remove(); URL.revokeObjectURL(url);
+  });
+
+  // ---------- Calendar placeholders ----------
+  connectCalendar.addEventListener('click', () => {
+    alert(
+      'Google Calendar integration (demo placeholder):\n\n' +
+      'To enable sync you must:\n' +
+      '1) Create a Google Cloud project, enable Calendar API and create OAuth credentials.\n' +
+      '2) Implement OAuth flow in a backend (or use OAuth popup with proper client origins).\n' +
+      '3) Use Google Calendar API to read/write events (then map study slots to calendar events).\n\nThis file is a local demo; full integration requires server-side or proper OAuth setup.'
+    );
+  });
+
+  autoPopulate.addEventListener('click', () => {
+    if(!confirm('Auto-populate study slots as events in your Google Calendar? This is a demo action (no real calendar). Continue?')) return;
+    alert('Demo: study slots would be created. In real integration the app would push events via the Calendar API.');
+  });
+
+  // ---------- Init ----------
+  function init(){
+    renderTimetable();
+    renderTasks();
+    const today = new Date();
+    todayLabel.textContent = today.toLocaleDateString(undefined, { weekday:'long', year:'numeric', month:'short', day:'numeric' });
+    focusSubjectLabel.textContent = subjectSelect.value;
+    subjectSelect.addEventListener('change', ()=> focusSubjectLabel.textContent = subjectSelect.value);
+  }
+  init();
+
+  // ---------- small UX niceties ----------
+  // load sample tasks first time
+  (function seedOnce(){
+    if(localStorage.getItem('cybo_seed_done')) return;
+    const sample = [
+      {id: 't1', title:'Finish Physics chapter 5 problems', subject:'Physics', completed:false, createdAt:new Date().toISOString()},
+      {id: 't2', title:'NCERT Chemistry exercise: Alcohols', subject:'Chemistry', completed:false, createdAt:new Date().toISOString()},
+    ];
+    const existing = loadTasks();
+    if(existing.length === 0){
+      saveTasks(sample);
+    }
+    localStorage.setItem('cybo_seed_done','1');
+  })();
+
+  // rerender after seed
+  setTimeout(renderTasks, 300);
+
 </script>
-
-<div class="footer">
-  <p>
-    Coolest Young Brain Online 🌐🧠<br />
-    Crafted in India with ❤️, and a curious mind.<br />
-    Contact:
-    <a href="mailto:cybo.buisness@gmail.com" style="color: #00faff; text-decoration: none">
-      cybo.buisness@gmail.com
-    </a><br /><br />
-    © 2025 CYBO. All rights reserved.
-  </p>
-</div>
 </body>
 </html>
